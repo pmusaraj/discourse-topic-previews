@@ -38,9 +38,10 @@ module TopicListAddon
       end
     end
 
-    @topics.each do |topic|
+    @topics.each_with_index do |topic, ind|
       topic.previewed_post = posts_map[topic.id]
       topic.previewed_post_actions = post_actions_map[topic.previewed_post.id] if topic.previewed_post
+      topic.previewed_post_index = ind
     end
 
     @topics
@@ -103,6 +104,7 @@ after_initialize do
   class ::Topic
     attr_accessor :previewed_post
     attr_accessor :previewed_post_actions
+    attr_accessor :previewed_post_index
   end
 
   require_dependency 'guardian/post_guardian'
@@ -190,6 +192,7 @@ after_initialize do
                :topic_post_bookmarked,
                :topic_post_is_current_users,
                :topic_post_number
+               :topic_index
 
     def include_topic_post_id?
       object.previewed_post.present?
@@ -200,6 +203,10 @@ after_initialize do
     end
 
     def topic_post_number
+      object.previewed_post&.post_number
+    end
+
+    def topic_index
       object.previewed_post&.post_number
     end
 
@@ -220,6 +227,9 @@ after_initialize do
 
     def thumbnails
       return unless object.archetype == Archetype.default
+      Rails.logger.warn(object.to_yaml)
+      Rails.logger.warn(object.previewed_post_index.to_yaml)
+      return unless (SiteSetting.topic_list_thumbnail_first_x_rows && object.previewed_post_index < SiteSetting.topic_list_thumbnail_first_x_rows)
       if SiteSetting.topic_list_hotlink_thumbnails
         thumbs = { normal: object.image_url, retina: object.image_url }
       else
