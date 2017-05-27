@@ -54,7 +54,7 @@ after_initialize do
   @nil_thumbs = TopicCustomField.where( name: 'thumbnails', value: nil )
   if @nil_thumbs.length
     @nil_thumbs.each do |thumb|
-      hash = { :normal => '', :retina => ''}
+      hash = { :retina => ''}
       thumb.value = ::JSON.generate(hash)
       thumb.save!
     end
@@ -80,9 +80,8 @@ after_initialize do
       def create_thumbnails(id, image, original_url)
         width = SiteSetting.topic_list_thumbnail_width
         height = SiteSetting.topic_list_thumbnail_height
-        normal = image ? thumbnail_url(image, width, height, original_url) : original_url
         retina = image ? thumbnail_url(image, width*2, height*2, original_url) : original_url
-        thumbnails = { normal: normal, retina: retina }
+        thumbnails = { retina: retina }
         save_thumbnails(id, thumbnails)
         return thumbnails
       end
@@ -227,11 +226,9 @@ after_initialize do
 
     def thumbnails
       return unless object.archetype == Archetype.default
-      Rails.logger.warn(object.to_yaml)
-      Rails.logger.warn(object.previewed_post_index.to_yaml)
       return unless (SiteSetting.topic_list_thumbnail_first_x_rows && object.previewed_post_index < SiteSetting.topic_list_thumbnail_first_x_rows)
       if SiteSetting.topic_list_hotlink_thumbnails
-        thumbs = { normal: object.image_url, retina: object.image_url }
+        thumbs = { retina: object.image_url }
       else
         thumbs = get_thumbnails || get_thumbnails_from_image_url
       end
@@ -239,7 +236,7 @@ after_initialize do
     end
 
     def include_thumbnails?
-      thumbnails.present? && (thumbnails[:normal].present? || thumbnails['normal'].present?)
+      thumbnails.present? && (thumbnails[:retina].present? || thumbnails['retina'].present?)
     end
 
     def get_thumbnails

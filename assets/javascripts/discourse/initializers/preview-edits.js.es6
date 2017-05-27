@@ -92,6 +92,12 @@ export default {
         return this.settingEnabled('topic_list_social') || this.get('site.mobileView')
       },
 
+      @computed('topics')
+      showSocialAvatars() {
+        return this.settingEnabled('topic_list_social_show_avatars')
+      },
+
+
       @on('didInsertElement')
       @observes('topics')
       setHideCategory() {

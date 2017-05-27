@@ -1,11 +1,15 @@
 <div class='topic-intro'>
-  <div class="topic-poster-avatars inline">
-    {{#each topic.posters as |poster|}}
-      <a href="{{poster.user.path}}" data-user-card="{{poster.user.username}}" class="{{poster.extras}}">
-        {{avatar poster avatarTemplatePath="user.avatar_template" usernamePath="user.username" imageSize="medium"}}
-      </a>
-    {{/each}}
-  </div>
+
+  {{#if showSocialAvatars}}
+    <div class="topic-poster-avatars inline">
+      {{#each topic.posters as |poster|}}
+        <a href="{{poster.user.path}}" data-user-card="{{poster.user.username}}" class="{{poster.extras}}">
+          {{avatar poster avatarTemplatePath="user.avatar_template" usernamePath="user.username" imageSize="medium"}}
+        </a>
+      {{/each}}
+    </div>
+  {{/if}}
+
   <div class="topic-intro-details inline">
     <div class="topic-intro-details-wrapper">
       <div class="topic-poster-names inline">
