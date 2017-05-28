@@ -132,7 +132,7 @@ export default {
       _setupProperties() {
         const topic = this.get('topic');
         if (topic.get('thumbnails')) {
-          testImageUrl(topic.get('thumbnails.normal'), function(imageLoaded) {
+          testImageUrl(topic.get('thumbnails.retina'), function(imageLoaded) {
             if (!imageLoaded) {
               topic.set('thumbnails', null)
             }
