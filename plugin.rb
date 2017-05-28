@@ -9,13 +9,14 @@ register_asset 'stylesheets/previews_mobile.scss'
 module TopicListAddon
   def load_topics
     @topics = super
-
     # TODO: better to keep track of previewed posts' id so they can be loaded at once
     posts_map = {}
     post_actions_map = {}
     accepted_anwser_post_ids = []
     normal_topic_ids = []
     previewed_post_ids = []
+    page = @opts[:page].to_i > 0 ? @opts[:page].to_i : 0
+
     @topics.each do |topic|
       if post_id = topic.custom_fields["accepted_answer_post_id"]&.to_i
         accepted_anwser_post_ids << post_id
@@ -39,9 +40,10 @@ module TopicListAddon
     end
 
     @topics.each_with_index do |topic, ind|
+      Rails.logger.warn(topic.to_yaml)
       topic.previewed_post = posts_map[topic.id]
       topic.previewed_post_actions = post_actions_map[topic.previewed_post.id] if topic.previewed_post
-      topic.previewed_post_index = ind
+      topic.previewed_post_index = (ind + (page * 30))
     end
 
     @topics
