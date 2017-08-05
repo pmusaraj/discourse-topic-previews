@@ -40,7 +40,6 @@ module TopicListAddon
     end
 
     @topics.each_with_index do |topic, ind|
-      Rails.logger.warn(topic.to_yaml)
       topic.previewed_post = posts_map[topic.id]
       topic.previewed_post_actions = post_actions_map[topic.previewed_post.id] if topic.previewed_post
       topic.previewed_post_index = (ind + (page * 30))
@@ -164,7 +163,7 @@ after_initialize do
   class ::CookedPostProcessor
     def update_post_image
       img = extract_images_for_post.first
-      if img["src"].present?
+      if img.present?
         url = img["src"][0...255]
         @post.update_column(:image_url, url) # post
         if @post.is_first_post?
